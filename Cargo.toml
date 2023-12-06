@@ -1,0 +1,14 @@
+[package]
+name = "advent2023"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = {version="4.4.11", features=["cargo"]}
+itertools = "0.10.5"
+num = "0.4.0"
+rangemap = "1.4.0"
+rayon = "1.6.1"
+regex = "1.7.0"
