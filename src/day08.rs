@@ -84,8 +84,8 @@ pub fn part2() {
             acc
         });
 
-    let mut starting_positions: HashSet<String> =
-        HashSet::from_iter(lines.keys().cloned().filter(|x| x.ends_with("A")));
+    let starting_positions: HashSet<String> =
+        HashSet::from_iter(lines.keys().cloned().filter(|x| x.ends_with('A')));
 
     let mut position_denominators: HashMap<String, u64> = HashMap::new();
 
@@ -106,7 +106,7 @@ pub fn part2() {
                 _ => {}
             }
 
-            if pos.ends_with("Z") {
+            if pos.ends_with('Z') {
                 position_denominators.insert(start_pos.clone(), idx);
                 break;
             }
