@@ -4,14 +4,14 @@ use itertools::Itertools;
 
 use crate::utils::read_input;
 
-fn print_map(map: &Vec<Vec<i64>>) {
-    for row in map {
-        for col in row {
-            print!("{}", *col);
-        }
-        println!();
-    }
-}
+// fn print_map(map: &Vec<Vec<i64>>) {
+//     for row in map {
+//         for col in row {
+//             print!("{}", *col);
+//         }
+//         println!();
+//     }
+// }
 
 pub fn part1() {
     let mut initial_map = read_input("inputs/day11.txt")
