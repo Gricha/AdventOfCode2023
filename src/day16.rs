@@ -1,6 +1,10 @@
 use std::collections::HashSet;
 
 use itertools::Itertools;
+use rayon::{
+    iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator},
+    ThreadPoolBuilder,
+};
 
 use crate::utils::read_input;
 
@@ -37,14 +41,14 @@ enum Direction {
 fn blast_beam(
     position_lookup: &mut HashSet<(usize, usize, Direction)>,
     map: &Vec<Vec<char>>,
-    energize_map: &mut Vec<Vec<i32>>,
+    energize_map: &mut HashSet<(usize, usize)>,
     curr_idx: (usize, usize),
     dir: Direction,
 ) {
     if position_lookup.contains(&(curr_idx.0, curr_idx.1, dir)) {
         return;
     }
-    energize_map[curr_idx.1][curr_idx.0] = 1;
+    energize_map.insert(curr_idx);
     position_lookup.insert((curr_idx.0, curr_idx.1, dir));
 
     match &map[curr_idx.1][curr_idx.0] {
@@ -286,11 +290,7 @@ pub fn part1() {
         .map(|x| x.chars().clone().collect_vec())
         .collect_vec();
 
-    let mut energize_map = vec![];
-    for _ in 0..map.len() {
-        let energize_row = vec![0; map.len()];
-        energize_map.push(energize_row);
-    }
+    let mut energize_map = HashSet::new();
 
     let mut position_lookup = HashSet::new();
     blast_beam(
@@ -300,64 +300,63 @@ pub fn part1() {
         (0, 0),
         Direction::E,
     );
-    println!(
-        "Day 16 Part 1: {}",
-        energize_map.iter().flatten().sum::<i32>()
-    );
+    println!("Day 16 Part 1: {}", energize_map.len());
 }
 
 fn calculate_energization(map: &Vec<Vec<char>>, idx: (usize, usize), direction: Direction) -> i32 {
-    let mut energize_map = vec![];
-    for _ in 0..map.len() {
-        let energize_row = vec![0; map.len()];
-        energize_map.push(energize_row);
-    }
+    let mut energized_points = HashSet::new();
 
     let mut position_lookup = HashSet::new();
-    blast_beam(&mut position_lookup, map, &mut energize_map, idx, direction);
-    let sum = energize_map.iter().flatten().sum::<i32>();
+    blast_beam(
+        &mut position_lookup,
+        map,
+        &mut energized_points,
+        idx,
+        direction,
+    );
+    let sum = energized_points.len();
 
-    sum
+    sum as i32
 }
 
 pub fn part2() {
+    ThreadPoolBuilder::new()
+        .stack_size(8 * 1024 * 1024)
+        .build_global()
+        .unwrap();
+
     let map = read_input("inputs/day16.txt")
         .into_iter()
         .map(|x| x.chars().clone().collect_vec())
         .collect_vec();
 
-    let mut max_energized = 0;
+    let mut energization_params = vec![];
+
     for j in 0..map.len() {
         for i in 0..map[0].len() {
             if i == 0 {
-                max_energized = std::cmp::max(
-                    max_energized,
-                    calculate_energization(&map, (i, j), Direction::E),
-                );
+                energization_params.push(((i, j), Direction::E));
             }
 
             if i == map[0].len() - 1 {
-                max_energized = std::cmp::max(
-                    max_energized,
-                    calculate_energization(&map, (i, j), Direction::W),
-                );
+                energization_params.push(((i, j), Direction::W));
             }
 
             if j == 0 {
-                max_energized = std::cmp::max(
-                    max_energized,
-                    calculate_energization(&map, (i, j), Direction::S),
-                );
+                energization_params.push(((i, j), Direction::S));
             }
 
             if j == map.len() - 1 {
-                max_energized = std::cmp::max(
-                    max_energized,
-                    calculate_energization(&map, (i, j), Direction::N),
-                );
+                energization_params.push(((i, j), Direction::N));
             }
         }
     }
+
+    let max_energized = energization_params
+        .par_iter()
+        .map(|x| calculate_energization(&map, x.0, x.1))
+        .max()
+        .unwrap();
 
     println!("Day 16 Part 2: {}", max_energized);
 }
