@@ -2,33 +2,33 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 use rayon::{
-    iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator},
+    iter::{IntoParallelRefIterator, ParallelIterator},
     ThreadPoolBuilder,
 };
 
 use crate::utils::read_input;
 
-fn print_map(map: &Vec<Vec<char>>) {
-    for row in map {
-        for col in row {
-            print!("{}", col);
-        }
-        println!();
-    }
-}
+// fn print_map(map: &Vec<Vec<char>>) {
+//     for row in map {
+//         for col in row {
+//             print!("{}", col);
+//         }
+//         println!();
+//     }
+// }
 
-fn print_energize_map(map: &Vec<Vec<i32>>) {
-    for row in map {
-        for col in row {
-            match col {
-                0 => print!("."),
-                1 => print!("#"),
-                _ => unreachable!(),
-            }
-        }
-        println!();
-    }
-}
+// fn print_energize_map(map: &Vec<Vec<i32>>) {
+//     for row in map {
+//         for col in row {
+//             match col {
+//                 0 => print!("."),
+//                 1 => print!("#"),
+//                 _ => unreachable!(),
+//             }
+//         }
+//         println!();
+//     }
+// }
 
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Hash, Clone, Copy)]
 enum Direction {

@@ -150,8 +150,8 @@ pub fn part2() {
     let mut cycle_lookup: Vec<Vec<Vec<char>>> = vec![deep_clone(&map)];
     let mut idx = 0;
 
-    let mut cycle_length = 0;
-    let mut first_idx = 0;
+    let cycle_length;
+    let first_idx;
     loop {
         idx += 1;
         roll_cycle(&mut map);

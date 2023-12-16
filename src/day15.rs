@@ -41,7 +41,7 @@ impl FromStr for Command {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.ends_with('-') {
-            let label = s[..s.len() - 1].to_string();
+            let label = s.strip_suffix('-').unwrap().to_string();
             let box_idx = hash(&label) as usize;
             Ok(Command {
                 label,
@@ -61,18 +61,18 @@ impl FromStr for Command {
     }
 }
 
-fn print_data(data: &Vec<Vec<(String, u64)>>) {
-    for (i, d) in data.iter().enumerate() {
-        if d.is_empty() {
-            continue;
-        }
-        println!("Box {}: {:?}", i + 1, d);
-    }
-}
+// fn print_data(data: &Vec<Vec<(String, u64)>>) {
+//     for (i, d) in data.iter().enumerate() {
+//         if d.is_empty() {
+//             continue;
+//         }
+//         println!("Box {}: {:?}", i + 1, d);
+//     }
+// }
 
 pub fn part2() {
     let mut data: Vec<Vec<(String, u64)>> = vec![];
-    for i in 0..256 {
+    for _ in 0..256 {
         data.push(vec![]);
     }
 
