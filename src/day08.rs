@@ -1,8 +1,7 @@
+use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
-use itertools::Itertools;
-
-use crate::utils::read_input;
+use crate::{math::lcm_of_vec, utils::read_input};
 
 pub fn part1() {
     let lines = read_input("inputs/day8.txt");
@@ -47,22 +46,6 @@ pub fn part1() {
             command_idx = 0;
         }
     }
-}
-
-fn gcd(a: u64, b: u64) -> u64 {
-    if b == 0 {
-        a
-    } else {
-        gcd(b, a % b)
-    }
-}
-
-fn lcm(a: u64, b: u64) -> u64 {
-    a / gcd(a, b) * b
-}
-
-fn lcm_of_vec(numbers: &[u64]) -> u64 {
-    numbers.iter().fold(1, |acc, &num| lcm(acc, num))
 }
 
 pub fn part2() {
