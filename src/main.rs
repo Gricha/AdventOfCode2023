@@ -28,7 +28,7 @@ mod day23;
 mod day24;
 mod day25;
 
-mod algo;
+mod dijkstra;
 mod math;
 mod utils;
 
