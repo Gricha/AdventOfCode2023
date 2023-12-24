@@ -1,7 +1,8 @@
-use std::collections::HashSet;
-
 use itertools::Itertools;
-use rust_decimal::Decimal;
+use z3::{
+    ast::{Ast, Int},
+    Config, Context,
+};
 
 use crate::utils::read_input;
 
@@ -94,7 +95,65 @@ pub fn part1() {
         })
         .collect_vec();
 
-    dbg!(intersections.len());
+    println!("Day 24 Part 1: {}", intersections.len());
 }
 
-pub fn part2() {}
+pub fn part2() {
+    let data = read_input("inputs/day24.txt")
+        .into_iter()
+        .map(|x| {
+            let (coord, speed) = x.split_once(" @ ").unwrap();
+
+            let (x, y, z) = coord
+                .split(", ")
+                .map(|x| x.parse::<i64>().unwrap())
+                .collect_tuple()
+                .unwrap();
+            let (dx, dy, dz) = speed
+                .split(", ")
+                .map(|x| x.trim().parse::<i64>().unwrap())
+                .collect_tuple()
+                .unwrap();
+
+            Particle {
+                pos: Point { x, y, z },
+                speed: Speed { dx, dy, dz },
+            }
+        })
+        .collect_vec();
+
+    // i despise this
+    let z3_config = Config::new();
+    let z3_context = Context::new(&z3_config);
+    let solver = z3::Solver::new(&z3_context);
+
+    let target_x = Int::new_const(&z3_context, "target_x");
+    let target_y = Int::new_const(&z3_context, "target_y");
+    let target_z = Int::new_const(&z3_context, "target_z");
+    let target_dx = Int::new_const(&z3_context, "target_dx");
+    let target_dy = Int::new_const(&z3_context, "target_dy");
+    let target_dz = Int::new_const(&z3_context, "target_dz");
+
+    for (idx, d) in data.into_iter().enumerate() {
+        let pos_x = Int::from_i64(&z3_context, d.pos.x);
+        let pos_y = Int::from_i64(&z3_context, d.pos.y);
+        let pos_z = Int::from_i64(&z3_context, d.pos.z);
+        let speed_x = Int::from_i64(&z3_context, d.speed.dx);
+        let speed_y = Int::from_i64(&z3_context, d.speed.dy);
+        let speed_z = Int::from_i64(&z3_context, d.speed.dz);
+
+        let t_name = format!("t_{}", idx);
+        let t = Int::new_const(&z3_context, t_name);
+
+        solver.assert(&(&pos_x + &speed_x * &t)._eq(&(&target_x + &target_dx * &t)));
+        solver.assert(&(&pos_y + &speed_y * &t)._eq(&(&target_y + &target_dy * &t)));
+        solver.assert(&(&pos_z + &speed_z * &t)._eq(&(&target_z + &target_dz * &t)));
+    }
+
+    solver.check();
+    let model = solver.get_model().unwrap();
+    let x = model.get_const_interp(&target_x).unwrap().as_i64().unwrap();
+    let y = model.get_const_interp(&target_y).unwrap().as_i64().unwrap();
+    let z = model.get_const_interp(&target_z).unwrap().as_i64().unwrap();
+    println!("Day 24 Part 2: {}", x + y + z);
+}

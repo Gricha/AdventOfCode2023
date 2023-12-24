@@ -29,8 +29,7 @@ impl FromStr for Direction {
 
 fn flood_fill(map: &mut [[usize; WIDTH]; WIDTH], pos: (usize, usize)) {
     let mut queue = vec![pos];
-    while !queue.is_empty() {
-        let (x, y) = queue.pop().unwrap();
+    while let Some((x, y)) = queue.pop() {
         if map[y][x] == 0 {
             map[y][x] = 2;
             if x < WIDTH - 1 {

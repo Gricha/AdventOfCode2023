@@ -152,6 +152,7 @@ pub fn part2() {
     let humidity = generic_mapper(temperature_to_humidity);
     let location = generic_mapper(humidity_to_location);
 
+    #[allow(clippy::single_range_in_vec_init)]
     let lowest_seed_location = seeds
         .iter()
         .map(|x| {

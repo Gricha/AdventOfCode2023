@@ -43,7 +43,7 @@ fn drop_blocks(blocks: &mut [Block]) -> (HashMap<usize, Vec<usize>>, HashMap<usi
     let mut above = HashMap::<usize, Vec<usize>>::new();
     let mut below = HashMap::<usize, Vec<usize>>::new();
 
-    for mut block in blocks.iter_mut() {
+    for block in blocks.iter_mut() {
         let x_range = block.start.x..=block.end.x;
         let y_range = block.start.y..=block.end.y;
         let all_coords = x_range.cartesian_product(y_range).collect_vec();

@@ -68,7 +68,7 @@ pub fn part2() {
         });
 
     let starting_positions: HashSet<String> =
-        HashSet::from_iter(lines.keys().cloned().filter(|x| x.ends_with('A')));
+        HashSet::from_iter(lines.keys().filter(|x| x.ends_with('A')).cloned());
 
     let mut position_denominators: HashMap<String, u64> = HashMap::new();
 

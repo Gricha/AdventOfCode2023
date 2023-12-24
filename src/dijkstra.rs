@@ -22,7 +22,7 @@ where
     N: PartialEq + Eq + Hash + Clone,
 {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cost.cmp(&other.cost).reverse())
+        Some(self.cmp(other))
     }
 }
 
